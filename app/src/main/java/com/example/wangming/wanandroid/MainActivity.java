@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,37 +21,23 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    sqllite dbHelper;
     EditText userName;
     EditText userKey;
     Button SignIn;
     Button SingUp;
-//    static class user{
-//        String name;
-//        String key;
-//        public void setName(String name){
-//            this.name = name;
-//        }
-//        public void setKey(String key){
-//            this.key = key;
-//        }
-//        public String getName(){
-//            return name;
-//        }
-//        public String getKey(){
-//            return key;
-//        }
-//    }
-
+    SharedPreferences sp;
+    CheckBox checkBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new sqllite(this,"user.db",null,1);
         userName = findViewById(R.id.user_name);
         userKey = findViewById(R.id.user_key);
         SignIn = findViewById(R.id.sign_in);
         SingUp = findViewById(R.id.sign_up);
+        checkBox = findViewById(R.id.checkbox);
+        sp = this.getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+        init();
         SignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,23 +52,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     if(name.equals(user[0])&&key.equals(user[1])){
                         Intent intent = new Intent(MainActivity.this,Main2Activity.class);
+                        intent.putExtra("extra_data",name);
                         startActivity(intent);
                     }else {
                         Toast.makeText(MainActivity.this,"账户密码错误",Toast.LENGTH_SHORT).show();
                     }
 
-//                    SharedPreferences pref = getSharedPreferences("user",MODE_PRIVATE);
-//                    String dname = pref.getString("name","");
-//                    String dkey = pref.getString("key","");
-//                    if(name.equals(dname)&&key.equals(dkey)){
-//                        Intent intent = new Intent(MainActivity.this,Main2Activity.class);
-//                        startActivity(intent);
-//                    }
-//                    if (name.equals(dname)){}
-//                    else {Toast.makeText(MainActivity.this,"用户名错误",Toast.LENGTH_SHORT).show();}
-//                    if (key.equals(dkey)){}
-//                    else {Toast.makeText(MainActivity.this,"密码错误",Toast.LENGTH_SHORT).show();}
-
+                    if (checkBox.isChecked()) {
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("username", name);
+                        editor.putString("userkey", key);
+                        editor.putBoolean("checkboxBoolean", true);
+                        editor.commit();
+                    }
+                    else {
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("username ", null);
+                        editor.putString("userkey", null);
+                        editor.putBoolean("checkboxBoolean", false);
+                        editor.commit();
+                    }
                 }
             }
         });
@@ -93,6 +83,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+    private void init(){
+        if (sp.getBoolean("checkboxBoolean", false))
+        {
+            userName.setText(sp.getString("username", null));
+            userKey.setText(sp.getString("userkey", null));
+            checkBox.setChecked(true);
+        }
+    }
+
     @Override
     public void onClick(View view){
 
