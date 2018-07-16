@@ -15,15 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
-import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Created by wangming on 2018/7/7.
  */
@@ -47,7 +42,6 @@ public class MyAdapter extends RecyclerView.Adapter{
     }
     public void setMdata(List<Article.DataBean.DatasBean> data){
         articleData.addAll(data);
-        Log.d("aaa", String.valueOf(articleData.size()));
     }
     class BannerViewHolder extends RecyclerView.ViewHolder{
         private ViewPager viewPager;
@@ -104,7 +98,8 @@ public class MyAdapter extends RecyclerView.Adapter{
                         int id = article.getId();
                         dbHelper = new CollectionArticleData(context,"Article",null,1);
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-                        Cursor cursor = db.query("Article",null,null,null,null,null,null);
+                        Cursor cursor = db.query("Article",null,null,null,
+                                null,null,null);
                         if (cursor.moveToFirst()){
                             boo = 0;
                             do {
@@ -119,12 +114,15 @@ public class MyAdapter extends RecyclerView.Adapter{
                                 boo++;
                             }while (cursor.moveToNext());
                         }
+                        Date date = new Date();
+                        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
                         if (boo == cursor.getCount()){
                             ContentValues values = new ContentValues();
                             values.put("username",name);
                             values.put("id",article.getId());
                             values.put("author",article.getAuthor());
                             values.put("date",article.getNiceDate());
+                            values.put("collectiondate",dateFormat.format(date));
                             values.put("link",article.getLink());
                             values.put("title",article.getTitle());
                             db.insert("Article",null,values);
@@ -162,12 +160,12 @@ public class MyAdapter extends RecyclerView.Adapter{
                 int a = 1;
                 dbHelper = new CollectionArticleData(context,"Article",null,1);
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
-                Cursor cursor = db.query("Article", null,null,null,null,null,null);
+                Cursor cursor = db.query("Article", null,"username=?",new String[]{name},
+                        null,null,null);
                 if (cursor.moveToFirst()){
                     do {
-                        String name1 = cursor.getString(cursor.getColumnIndex("username"));
                         int id1 = cursor.getInt(cursor.getColumnIndex("id"));
-                        if (id == id1 && name.equals(name1)){
+                        if (id == id1){
                             holder2.listImage.setImageResource(R.mipmap.be_collectioned);
                             a = 0;
                             break;

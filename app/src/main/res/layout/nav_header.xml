@@ -8,22 +8,12 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:id="@+id/icon_image"
-        android:src="@mipmap/nav_icon"
         android:layout_centerInParent="true"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mail"
+        android:id="@+id/autograph"
         android:layout_alignParentBottom="true"
-        android:text="哈哈"
-        android:textColor="#FFF"
-        android:textSize="14sp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/username"
-        android:layout_above="@+id/mail"
-        android:text="嘻嘻"
         android:textColor="#FFF"
         android:textSize="14sp"/>
 </RelativeLayout>

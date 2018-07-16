@@ -25,21 +25,13 @@ import okhttp3.Response;
 
 public class WebActivity extends AppCompatActivity {
     private String url;
-//    TextView responseText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.web);
-//        responseText = findViewById(R.id.respone_text);
-        Log.e("a","*************************");
         Intent intent = getIntent();
-        Log.e("b","*************************");
         url = intent.getStringExtra("extra_data");
-        Log.e("c",url);
-//        sendRequestWithOkHttp(url);
         webView(url);
-//        web(url);
-        Log.e("d","*************************");
     }
     private void webView(final String url){
         WebView webView = findViewById(R.id.web_view);
@@ -47,6 +39,4 @@ public class WebActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
     }
-
-
 }

@@ -169,6 +169,15 @@ public class Article {
             private int visible;
             private int zan;
             private List<?> tags;
+            private String collectiondate;
+
+            public String getCollectiondate(){
+                return collectiondate;
+            }
+
+            public void setCollectiondate(String collectiondate){
+                this.collectiondate = collectiondate;
+            }
 
             public String getApkLink() {
                 return apkLink;

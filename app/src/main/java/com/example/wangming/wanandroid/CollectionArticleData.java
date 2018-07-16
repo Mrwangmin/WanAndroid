@@ -14,6 +14,7 @@ public class CollectionArticleData  extends SQLiteOpenHelper{
             +"username text,"
             +"author text,"
             +"date text,"
+            +"collectiondate text,"
             +"link text,"
             +"title text)";
     private Context mContext;

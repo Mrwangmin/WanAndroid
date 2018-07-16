@@ -38,6 +38,7 @@ public class MyCollectionActivity extends AppCompatActivity {
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setLink(cursor.getString(cursor.getColumnIndex("link")));
                 article.setNiceDate(cursor.getString(cursor.getColumnIndex("date")));
+                article.setCollectiondate(cursor.getString(cursor.getColumnIndex("collectiondate")));
                 articleData.add(article);
             }while (cursor.moveToNext());
         }

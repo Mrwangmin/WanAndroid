@@ -1,12 +1,17 @@
 package com.example.wangming.wanandroid;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +44,8 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     private ViewPager viewPager;
     private List<ImageView> list;
     private String name;
+    private String pictureUri,autograph1;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     private static final String TAG = "Main2Activity";
@@ -51,30 +58,35 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         articleRecyclerView = findViewById(R.id.list_view);
         articleLayoutManager = new LinearLayoutManager(this);
         articleRecyclerView.setLayoutManager(articleLayoutManager);
-//        articleAdapter = new ArticleAdapter(Main2Activity.this, name);
-//        articleRecyclerView.addOnScrollListener(scrollListener);
-//        articleRecyclerView.setAdapter(articleAdapter);
         new MyAsyncTaskBanner().execute();
-//        new MyAsyncTaskArticle().execute();
-        navigation();//侧滑
-        dbHelper = new CollectionArticleData(this,"ArticleStore.db",null,1);
-        dbHelper.getWritableDatabase();
+        setnavigation();//侧滑
+        setSwipeRefreshLayout();
     }
-    public void navigation(){
+    private void setSwipeRefreshLayout(){
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 0;
+                new MyAsyncTaskBanner().execute();
+                articleAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+    public void setnavigation(){
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        Log.d("aaa", String.valueOf(1));
         NavigationView navView = findViewById(R.id.nav_view);
-        Log.d("aaa", String.valueOf(2));
+        View headview = navView.inflateHeaderView(R.layout.nav_header);
+        setNavHead(headview);
+
         ActionBar actionBar = getSupportActionBar();
-        Log.d("aaa", String.valueOf(3));
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            Log.d("aaa", String.valueOf(4));
             actionBar.setHomeAsUpIndicator(R.mipmap.menu);
-            Log.d("aaa", String.valueOf(5));
         }
         navView.setCheckedItem(R.id.mycollection);
-        Log.d("aaa", String.valueOf(6));
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -85,10 +97,49 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                         intent.putExtra("extra_data",name);
                         startActivity(intent);
                         break;
+                    case R.id.exit:
+                        Intent intent1 = new Intent(Main2Activity.this,MainActivity.class);
+                        startActivity(intent1);
                     default:
                         mDrawerLayout.closeDrawers();
                 }
                 return true;
+            }
+        });
+    }
+    private void setNavHead(View headview){
+        SharedPreferences preferences = getSharedPreferences("uerifo",MODE_PRIVATE);
+        pictureUri = preferences.getString("pictureuri","");
+        autograph1 = preferences.getString("autograph","");
+        ImageView userhead = headview.findViewById(R.id.icon_image);
+        TextView autograph = headview.findViewById(R.id.autograph);
+        if (pictureUri.equals("")){
+            Resources res = Main2Activity.this.getResources();
+            Bitmap bitmap = BitmapFactory.decodeResource(res,R.mipmap.nav_icon);
+            userhead.setImageBitmap(bitmap);
+        }else {
+            Bitmap bitmap = BitmapFactory.decodeFile(pictureUri);
+            userhead.setImageBitmap(bitmap);
+        }
+        if (autograph1.equals("")){
+            autograph.setText("设置你的个性签名吧");
+        }else {
+            autograph.setText(autograph1);
+        }
+        userhead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Main2Activity.this,UserActivity.class);
+                intent.putExtra("extra_data",name);
+                startActivity(intent);
+            }
+        });
+        autograph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Main2Activity.this,UserActivity.class);
+                intent.putExtra("extra_data",name);
+                startActivity(intent);
             }
         });
     }
@@ -112,17 +163,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         try {
             Banner banner = new Gson().fromJson(jsonData, new TypeToken<Banner>() {
             }.getType());
-            for (Banner.DataBean dataBeans : banner.getData()) {
-                int Id = dataBeans.getId();
-                String Desc = dataBeans.getDesc();
-                String ImagePath = dataBeans.getImagePath();
-                String Title = dataBeans.getTitle();
-                String Url = dataBeans.getUrl();
-                int IsVisible = dataBeans.getIsVisible();
-                int Order = dataBeans.getOrder();
-                int Type = dataBeans.getType();
-                banner_json.add(new Banner.DataBean(Desc, Id, ImagePath, IsVisible, Order, Title, Type, Url));
-            }
+            banner_json.addAll(banner.getData());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -139,7 +180,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
     }
-    class MyAsyncTaskBanner extends AsyncTask<Void,Integer,Boolean>{
+    class MyAsyncTaskBanner extends AsyncTask<Void,Integer, Boolean>{
         @Override
         protected Boolean doInBackground(Void... params){
             OkHttpClient client = new OkHttpClient();
@@ -172,7 +213,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    class MyAsyncTaskArticle extends AsyncTask<Void,Integer,Boolean>{
+    class MyAsyncTaskArticle extends AsyncTask<Void,Integer, Boolean>{
         @Override
         protected Boolean doInBackground(Void... params){
             OkHttpClient client = new OkHttpClient();
