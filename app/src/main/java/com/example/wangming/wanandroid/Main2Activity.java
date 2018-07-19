@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -33,7 +35,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener{
-    private CollectionArticleData dbHelper;
     public List<Banner.DataBean> banner_json = new ArrayList<>();
     public List<Article.DataBean.DatasBean> list_json = new ArrayList<>();
     private DrawerLayout mDrawerLayout;
@@ -41,14 +42,10 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     private LinearLayoutManager articleLayoutManager;
     private int page = 0;
     private MyAdapter articleAdapter;
-    private ViewPager viewPager;
-    private List<ImageView> list;
     private String name;
     private String pictureUri,autograph1;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-
-    private static final String TAG = "Main2Activity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +55,9 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         articleRecyclerView = findViewById(R.id.list_view);
         articleLayoutManager = new LinearLayoutManager(this);
         articleRecyclerView.setLayoutManager(articleLayoutManager);
+        articleAdapter = new MyAdapter(name, Main2Activity.this);
+        articleRecyclerView.addOnScrollListener(scrollListener);
+        articleRecyclerView.setAdapter(articleAdapter);
         new MyAsyncTaskBanner().execute();
         setnavigation();//侧滑
         setSwipeRefreshLayout();
@@ -69,7 +69,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onRefresh() {
                 page = 0;
-                new MyAsyncTaskBanner().execute();
+                new AsyncTaskArticle().execute();
                 articleAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -201,14 +201,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         }
         @Override
         protected void onPostExecute(Boolean result){
-            viewPager = findViewById(R.id.viewPager);
-            list = new ArrayList<>();
-            for (int i = 0; i < banner_json.size(); i++) {
-                ImageView imageView = new ImageView(Main2Activity.this);
-                list.add(imageView);
-            }
-//            BannerAdapter pagerAdapter = new BannerAdapter(list,banner_json,Main2Activity.this);
-//            viewPager.setAdapter(pagerAdapter);
             new MyAsyncTaskArticle().execute();
         }
     }
@@ -221,7 +213,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             Request request = new Request.Builder()
                     .url("http://www.wanandroid.com/article/list/"+String.valueOf(page)+"/json")
                     .build();
-            Log.d("aaa","http://www.wanandroid.com/article/list/"+String.valueOf(page)+"/json");
             String responseData;
             try {
                 response = client.newCall(request).execute();
@@ -237,12 +228,12 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         @Override
         protected void onPostExecute(Boolean result){
             if (page == 1) {
-                articleAdapter = new MyAdapter(list, banner_json, name, Main2Activity.this, list_json);
-                articleRecyclerView.addOnScrollListener(scrollListener);
-                articleRecyclerView.setAdapter(articleAdapter);
+                articleAdapter.setMdata(list_json);
+                articleAdapter.setBannerData(banner_json);
+                articleAdapter.notifyDataSetChanged();
             }else if (page <= 3){
                 articleAdapter.setMdata(list_json);
-                articleRecyclerView.getAdapter().notifyDataSetChanged();
+                articleAdapter.notifyDataSetChanged();
             }else {
                 Toast.makeText(getApplicationContext(),"哼 不准往下滑了！！",Toast.LENGTH_SHORT).show();
             }
@@ -261,4 +252,30 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             }
         }
     };
+
+    class AsyncTaskArticle extends AsyncTask<Void,Integer, Boolean>{
+        @Override
+        protected Boolean doInBackground(Void... params){
+            OkHttpClient client = new OkHttpClient();
+            Response response;
+            Request request = new Request.Builder()
+                    .url("http://www.wanandroid.com/article/list/"+String.valueOf(page)+"/json")
+                    .build();
+            String responseData;
+            try {
+                response = client.newCall(request).execute();
+                responseData = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            page++;
+            listJson(responseData);
+            return true;
+        }
+        @Override
+        protected void onPostExecute(Boolean result){
+            articleAdapter.setMdata(list_json);
+        }
+    }
 }
