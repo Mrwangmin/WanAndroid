@@ -38,10 +38,9 @@ public class UserActivity extends AppCompatActivity {
     public static final int CHOOSE_PHOTO = 2;
     private ImageView picture;
     private Uri imageUri;
-    String pictureuri = "1";
-    String qianmin;
-    String TAG = "TAG";
-    String name;
+    private String pictureuri = "1";
+    private String qianmin;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,19 +61,12 @@ public class UserActivity extends AppCompatActivity {
                     final SharedPreferences.Editor editor = getSharedPreferences("uerifo",MODE_PRIVATE).edit();
                     editor.putString("autograph",qianmin);
                     editor.apply();
-                    Log.e(TAG, "onClick: " + "签名不为空" );
                 }
                 if (!pictureuri.equals("1")){
                     final SharedPreferences.Editor editor = getSharedPreferences("uerifo",MODE_PRIVATE).edit();
                     editor.putString("pictureuri",pictureuri);
                     editor.apply();
-                    Log.e(TAG, "onClick: " + "头像不为空" );
                 }
-
-                SharedPreferences preferences = getSharedPreferences("uerifo",MODE_PRIVATE);
-                String autograph1 = preferences.getString("autograph","");
-                Log.e("TAG", "onClick:中 " + autograph1 );
-
                 Intent intent = new Intent(UserActivity.this,Main2Activity.class);
                 intent.putExtra("extra_data",name);
                 startActivity(intent);
@@ -178,14 +170,11 @@ public class UserActivity extends AppCompatActivity {
                 Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
                         Long.valueOf(docId));
                 imagePath = getImagePath(contentUri,null);
-                Log.d("aaaa1",imagePath);
             }
         }else if ("content".equalsIgnoreCase(uri.getScheme())){
             imagePath = getImagePath(uri,null);
-            Log.d("aaaa2",imagePath);
         }else if ("file".equalsIgnoreCase(uri.getScheme())){
             imagePath = uri.getPath();
-            Log.d("aaaa3",imagePath);
         }
         Log.d("aaaa4",imagePath.toString());
         displayImage(imagePath);

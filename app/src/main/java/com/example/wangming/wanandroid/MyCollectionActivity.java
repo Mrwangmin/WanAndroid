@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,7 +30,8 @@ public class MyCollectionActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         dbHelper = new CollectionArticleData(this,"Article",null,1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("Article",null,"username=?",new String[]{name},null,null,null);
+        Cursor cursor = db.query("Article",null,"username=?",new String[]{name},
+                null,null,null);
         if (cursor.moveToFirst()){
             do {
                 Article.DataBean.DatasBean article = new Article.DataBean.DatasBean();

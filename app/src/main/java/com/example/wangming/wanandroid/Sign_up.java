@@ -35,10 +35,6 @@ public class Sign_up extends AppCompatActivity {
                 String username = et_userName.getText().toString();
                 String userkey = et_userKey.getText().toString();
                 saveUserInfo(username,userkey);
-//                SharedPreferences.Editor editor = getSharedPreferences("user",MODE_PRIVATE).edit();
-//                editor.putString("name",username);
-//                editor.putString("key",userkey);
-//                editor.apply();
                 Intent intent = new Intent(Sign_up.this,MainActivity.class);
                 startActivity(intent);
             }

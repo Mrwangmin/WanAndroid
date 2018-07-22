@@ -80,7 +80,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         NavigationView navView = findViewById(R.id.nav_view);
         View headview = navView.inflateHeaderView(R.layout.nav_header);
         setNavHead(headview);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -211,7 +210,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             OkHttpClient client = new OkHttpClient();
             Response response;
             Request request = new Request.Builder()
-                    .url("http://www.wanandroid.com/article/list/"+String.valueOf(page)+"/json")
+                    .url("http://www.wanandroid.com/article/list/"+page+"/json")
                     .build();
             String responseData;
             try {
@@ -248,6 +247,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
                 if (lastVisiblePosition+1==recyclerView.getAdapter().getItemCount()){
                     new MyAsyncTaskArticle().execute();
+                   // articleAdapter.notifyDataSetChanged();
                 }
             }
         }

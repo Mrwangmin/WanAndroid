@@ -207,7 +207,7 @@ public class MyAdapter extends RecyclerView.Adapter{
 //                        总之，一个页面selected之后  最多只有一个runnable，要把多的remove掉
                         handler.removeCallbacks(runnable);
                         if (position != banner_list.size()+1 && position != 0){
-                            handler.postDelayed(runnable,3*1000);
+                            handler.postDelayed(runnable,3000);
                         }
                         for(int i=0;i<dot_list.size();i++){
                             if(i==(position - 1 + banner_list.size())%banner_list.size()){
@@ -223,11 +223,6 @@ public class MyAdapter extends RecyclerView.Adapter{
                     public void onPageScrollStateChanged(int state) {
                         switch (state) {
                             case 0://什么都没做  空闲状态
-//                             if (holder1.viewPager.getCurrentItem() == 0){
-//                                 holder1.viewPager.setCurrentItem(banner_list.size(), false);
-//                             }else if (holder1.viewPager.getCurrentItem() == banner_list.size()+1){
-//                                 holder1.viewPager.setCurrentItem(1, false);
-//                             }
                                 break;
                             case 1://正在滑动
                                 break;
