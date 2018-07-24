@@ -71,27 +71,12 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
                 int id = article.getId();
                 dbHelper = new CollectionArticleData(context,"Article",null,1);
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
-                Cursor cursor = db.query("Article",null,null,null,null,null,null);
-//                if (cursor.moveToFirst()){
-//                    boo = 0;
-//                    do {
-//                        String name1 = cursor.getString(cursor.getColumnIndex("username"));
-//                        int id1 = cursor.getInt(cursor.getColumnIndex("id"));
-//                        if (id == id1 && name.equals(name1)){
-//                            db.delete("Article","id=? and username=?",new String[] {String.valueOf(id),name});
-//                            holder.listImage.setImageResource(R.mipmap.collection);
-//                            Toast.makeText(context,"取消收藏",Toast.LENGTH_SHORT).show();
-//                            remove(position);
-//                            break;
-//                        }
-//                        boo++;
-//                    }while (cursor.moveToNext());
-//                }
+                Cursor cursor = db.query("Article",null,null,
+                        null,null,null,null);
                 db.delete("Article","id=? and username=?",new String[] {String.valueOf(id),name});
-                holder.listImage.setImageResource(R.mipmap.collection);
-                Toast.makeText(context,"取消收藏",Toast.LENGTH_SHORT).show();
-                remove(position);
                 cursor.close();
+                remove(position);
+                Toast.makeText(context,"取消收藏",Toast.LENGTH_SHORT).show();
             }
         });
         return holder;
@@ -99,25 +84,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder,int position){
         Article.DataBean.DatasBean article = articleData.get(position);
-        int id = article.getId();
-        int a = 1;
-        dbHelper = new CollectionArticleData(context,"Article",null,1);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("Article", null,null,null,null,null,null);
-        if (cursor.moveToFirst()){
-            do {
-                String name1 = cursor.getString(cursor.getColumnIndex("username"));
-                int id1 = cursor.getInt(cursor.getColumnIndex("id"));
-                if (id == id1 && name.equals(name1)){
-                    holder.listImage.setImageResource(R.mipmap.be_collectioned);
-                    a = 0;
-                    break;
-                }
-            }while (cursor.moveToNext());
-        }
-        if (a == 1){
-            holder.listImage.setImageResource(R.mipmap.collection);
-        }
+        holder.listImage.setImageResource(R.mipmap.be_collectioned);
         holder.listAuthor.setText(article.getAuthor());
         holder.listDate.setText(article.getCollectiondate());
         holder.listTitle.setText(article.getTitle());

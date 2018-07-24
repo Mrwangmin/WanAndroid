@@ -70,7 +70,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
             public void onRefresh() {
                 page = 0;
                 new AsyncTaskArticle().execute();
-                articleAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -230,12 +229,10 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 articleAdapter.setMdata(list_json);
                 articleAdapter.setBannerData(banner_json);
                 articleAdapter.notifyDataSetChanged();
-            }else if (page <= 3){
+            }else
                 articleAdapter.setMdata(list_json);
                 articleAdapter.notifyDataSetChanged();
-            }else {
-                Toast.makeText(getApplicationContext(),"哼 不准往下滑了！！",Toast.LENGTH_SHORT).show();
-            }
+
         }
     }
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
@@ -247,7 +244,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
                 if (lastVisiblePosition+1==recyclerView.getAdapter().getItemCount()){
                     new MyAsyncTaskArticle().execute();
-                   // articleAdapter.notifyDataSetChanged();
                 }
             }
         }
@@ -275,7 +271,8 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         }
         @Override
         protected void onPostExecute(Boolean result){
-            articleAdapter.setMdata(list_json);
+            articleAdapter.setreMdata(list_json);
+            articleAdapter.notifyDataSetChanged();
         }
     }
 }

@@ -52,6 +52,10 @@ public class MyAdapter extends RecyclerView.Adapter{
     public void setMdata(List<Article.DataBean.DatasBean> data){
         articleData.addAll(data);
     }
+    public void setreMdata(List<Article.DataBean.DatasBean> data){
+        articleData.clear();
+        articleData.addAll(data);
+    }
 
     public void setBannerData(List<Banner.DataBean> banners){
         banner_list.clear();

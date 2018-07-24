@@ -49,7 +49,7 @@ public class UserActivity extends AppCompatActivity {
         Intent intent = getIntent();
         name = intent.getStringExtra("extra_data");
         Button button2= findViewById(R.id.choose_from_album);
-        Button button1 = findViewById(R.id.take_photo);
+      //  Button button1 = findViewById(R.id.take_photo);
         Button button3 = findViewById(R.id.qiqi);
         final EditText editText = findViewById(R.id.xixi);
         picture = findViewById(R.id.picture);
@@ -73,30 +73,30 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
-                try{
-                    if (outputImage.exists()){
-                        outputImage.delete();
-                    }
-                    outputImage.createNewFile();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-                if (Build.VERSION.SDK_INT >= 24){
-                    imageUri = FileProvider.getUriForFile(UserActivity.this,
-                            "com.example.wangming.wanandroid.fileprovider",outputImage);
-                }else {
-                    imageUri = Uri.fromFile(outputImage);
-                }
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-                startActivityForResult(intent,TAKE_PHOTO);
-            }
-        });
-
+//      //  button1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
+//                try{
+//                    if (outputImage.exists()){
+//                        outputImage.delete();
+//                    }
+//                    outputImage.createNewFile();
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                }
+//                if (Build.VERSION.SDK_INT >= 24){
+//                    imageUri = FileProvider.getUriForFile(UserActivity.this,
+//                            "com.example.wangming.wanandroid.fileprovider",outputImage);
+//                }else {
+//                    imageUri = Uri.fromFile(outputImage);
+//                }
+//                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+//                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+//                startActivityForResult(intent,TAKE_PHOTO);
+//            }
+//        });
+//
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
